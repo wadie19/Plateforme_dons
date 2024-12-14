@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="layout :: head"></head>
+  <head th:replace="~{layout :: head}"></head>
   <body>
-    <div th:replace="layout :: navbar"></div>
+    <div th:replace="~{layout :: navbar}"></div>
 
     <!-- Hero Section -->
     <div class="bg-primary text-white" style="height: 60vh">
@@ -56,6 +56,6 @@
       </div>
     </div>
 
-    <div th:replace="layout :: footer"></div>
+    <div th:replace="~{layout :: footer}"></div>
   </body>
 </html>

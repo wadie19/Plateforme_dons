@@ -1,5 +1,6 @@
 package com.example.plateformeDons.Controller;
 
+import com.example.plateformeDons.DTO.AnnonceDTO;
 import com.example.plateformeDons.Service.AnnonceService;
 import com.example.plateformeDons.Service.UtilisateurService;
 import com.example.plateformeDons.models.Annonce;
@@ -14,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/annonces")
@@ -93,4 +95,21 @@ public class AnnonceController {
         List<Annonce> annonces = annonceService.getAnnoncesByUser(userId);
         return ResponseEntity.ok(annonces);
     }
+
+@GetMapping("/{id}")
+public ResponseEntity<AnnonceDTO> getAnnonceById(@PathVariable Long id) {
+    Optional<Annonce> annonce = annonceService.getAnnonceById(id);
+
+    return annonce.map(a -> ResponseEntity.ok(new AnnonceDTO(
+            a.getTitle(),
+            a.getDescription(),
+            a.getEtat(),
+            a.getDatePublication(),
+            a.getZoneGeographique(),
+            a.getModaliteDon()
+    )))
+    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+}
+
+
 }
