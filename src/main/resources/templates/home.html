@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="layout :: head"></head>
+  <body>
+    <div th:replace="layout :: navbar"></div>
+
+    <!-- Hero Section -->
+    <div class="bg-primary text-white" style="height: 60vh">
+      <div
+        class="container d-flex justify-content-center align-items-center h-100 text-center"
+      >
+        <div>
+          <h1
+            class="display-3 fw-bold animate__animated animate__fadeIn animate__delay-1s"
+          >
+            Bienvenue à la Plateforme de Dons
+          </h1>
+          <p class="lead fs-4 mb-4">
+            Faites un geste, donnez une seconde vie à vos objets ! Ensemble,
+            redonnons-leur une nouvelle chance.
+          </p>
+
+          <a
+            href="/annonces"
+            class="btn btn-light btn-lg shadow-lg rounded-pill px-4 py-2 fs-5 fw-bold text-dark hover-effect"
+          >
+            Voir les annonces
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Featured Ads -->
+    <div class="container">
+      <h2 class="mb-4 mt-4">Annonces Récentes</h2>
+      <div class="row">
+        <!-- Dynamic Ad Cards -->
+        <div class="col-md-4 mb-4" th:each="annonce : ${annonces}">
+          <div class="card h-100">
+            <img
+              src="https://via.placeholder.com/300x200"
+              class="card-img-top"
+              alt="Image de l'annonce"
+            />
+            <div class="card-body">
+              <h5 class="card-title" th:text="${annonce.title}"></h5>
+              <p class="card-text" th:text="${annonce.description}"></p>
+            </div>
+            <div class="card-footer">
+              <a th:href="@{/annonces/{id}(id=${annonce.id})}" class="btn btn-primary">
+                Voir les détails
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="layout :: footer"></div>
+  </body>
+</html>
