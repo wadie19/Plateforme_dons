@@ -6,6 +6,57 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
     />
+    <style>
+      .card-container {
+        position: relative; /* Ensure positioning is relative for the chat window */
+      }
+
+      .chat-window {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        width: 300px;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        border-radius: 8px;
+      }
+
+      .chat-header {
+        padding: 10px;
+        background-color: #007bff;
+        color: #fff;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+      }
+
+      .chat-body {
+        padding: 10px;
+        flex: 1;
+        overflow-y: auto;
+        max-height: 200px;
+      }
+
+      .chat-footer {
+        display: flex;
+        padding: 10px;
+      }
+
+      .chat-footer input {
+        flex: 1;
+        margin-right: 5px;
+      }
+
+      .d-none {
+        display: none;
+      }
+    </style>
   </head>
 
   <body>
@@ -25,7 +76,7 @@
       style="min-height: 100vh"
     >
       <div class="row w-100">
-        <div class="col-md-8 col-lg-6 mx-auto">
+        <div class="col-md-8 col-lg-6 mx-auto card-container">
           <div class="card" style="width: 100%; max-width: 600px">
             <img
               src="https://via.placeholder.com/600x400"
@@ -71,12 +122,58 @@
                 <span th:text="${annonce.modaliteDon}"></span>
               </p>
               <div class="mt-3">
-                <button class="btn btn-primary" style="margin-right: 1rem">
-                  <i class="fas fa-envelope"></i> Contacter le vendeur
+                <button
+                  class="btn btn-primary"
+                  style="margin-right: 1rem"
+                  onclick="toggleChatWindow()"
+                >
+                  <i class="fas fa-envelope"></i> Contacter le donateur
                 </button>
 
                 <button class="btn btn-primary" style="margin-right: 1rem">
-                  <i class="fas fa-envelope"></i> Ajouter aux favoris
+                  <i class="fas fa-heart"></i> Ajouter aux favoris
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat Window -->
+          <div
+            id="chatWindow"
+            class="card d-none"
+            style="
+              width: 100%;
+              max-width: 600px;
+              margin-top: 2rem;
+              padding: 1rem;
+              margin-bottom: 2rem;
+            "
+          >
+            <div class="chat-window">
+              <div class="chat-header">
+                <span>Discuter avec le donateur</span>
+                <button class="close-btn" onclick="toggleChatWindow()">
+                  X
+                </button>
+              </div>
+              <div class="chat-body">
+                <div id="chatMessages" class="chat-messages"></div>
+              </div>
+              <div class="chat-footer">
+                <input
+                  type="text"
+                  id="chatInput"
+                  style="margin-top: 1rem"
+                  placeholder="Type your message..."
+                  class="form-control"
+                />
+                <button
+                  id="sendMessageBtn"
+                  class="btn btn-primary"
+                  style="margin-top: 1rem"
+                  onclick="sendMessage()"
+                >
+                  Envoyer
                 </button>
               </div>
             </div>
@@ -86,5 +183,46 @@
     </div>
 
     <div th:replace="layout :: footer"></div>
+
+    <script>
+      function toggleChatWindow() {
+        const chatWindow = document.getElementById("chatWindow");
+        chatWindow.classList.toggle("d-none");
+      }
+
+      function sendMessage() {
+        const input = document.getElementById("chatInput");
+        const message = input.value.trim();
+
+        if (message) {
+          const chatMessages = document.getElementById("chatMessages");
+
+          // Display the user's message
+          const userMessage = document.createElement("div");
+          userMessage.textContent = message;
+          userMessage.style.marginBottom = "10px";
+          userMessage.style.textAlign = "right";
+          userMessage.style.color = "#007bff";
+          chatMessages.appendChild(userMessage);
+
+          // Clear the input
+          input.value = "";
+
+          // Simulate a response (Replace this with server-side logic)
+          setTimeout(() => {
+            const sellerMessage = document.createElement("div");
+            sellerMessage.textContent =
+              "Merci de m'avoir contacté ! Je vous contacterai dès que possible.";
+            sellerMessage.style.marginBottom = "10px";
+            sellerMessage.style.textAlign = "left";
+            sellerMessage.style.color = "#333";
+            chatMessages.appendChild(sellerMessage);
+
+            // Scroll to the bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+          }, 1000);
+        }
+      }
+    </script>
   </body>
 </html>

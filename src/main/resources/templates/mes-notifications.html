@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="layout :: head"></head>
+
+  <body>
+    <div th:replace="~{layout :: navbar}" th:if="${!isLoggedIn}"></div>
+    <div th:replace="~{layout :: dashboard-navbar}" th:if="${isLoggedIn}"></div>
+
+    <div class="container" style="height: 100%; min-height: 90vh">
+      <h2 class="mb-4 mt-4">Mes Notifications</h2>
+
+      <!-- Message when no notifications -->
+      <div th:if="${notifications == null or notifications.isEmpty()}">
+        <p class="alert alert-info">
+          Vous n'avez pas encore reçu de notifications.
+        </p>
+      </div>
+
+      <!-- Message when notifications are available -->
+      <div th:if="${notifications != null and !notifications.isEmpty()}">
+        <p class="alert alert-success">
+          Vous avez reçu les notifications suivantes :
+        </p>
+        <div class="list-group">
+          <div
+            class="list-group-item"
+            th:each="notification : ${notifications}"
+          >
+            <h5 th:text="${notification.message}"></h5>
+            <small th:text="${notification.date}"></small>
+          </div>
+        </div>
+      </div>
+
+      <!-- Fallback message (e.g., login prompt) -->
+      <div th:if="${message}">
+        <p th:text="${message}" class="alert alert-info"></p>
+      </div>
+    </div>
+
+    <div th:replace="layout :: footer"></div>
+  </body>
+</html>
