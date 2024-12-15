@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.http.MediaType;
+
 import java.util.List;
 
 @RestController
@@ -16,22 +18,26 @@ public class ConversationController {
     @Autowired
     private ConversationService conversationService;
 
-    @PostMapping("/create")
+    // Create a new conversation
+    @PostMapping(consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
     public ResponseEntity<ConversationDTO> createConversation(@RequestBody ConversationDTO conversationDTO) {
         return ResponseEntity.ok(conversationService.createConversation(conversationDTO));
     }
 
-    @GetMapping("/user/{userId}")
+    // Get all conversations for a user
+    @GetMapping(value = "/user/{userId}", produces = MediaType.ALL_VALUE)
     public ResponseEntity<List<ConversationDTO>> getConversationsForUser(@PathVariable Long userId) {
         return ResponseEntity.ok(conversationService.getConversationsForUser(userId));
     }
 
-    @GetMapping("/{conversationId}")
+    // Get a conversation by its ID
+    @GetMapping(value = "/{conversationId}", produces = MediaType.ALL_VALUE)
     public ResponseEntity<ConversationDTO> getConversationById(@PathVariable Long conversationId) {
         return ResponseEntity.ok(conversationService.getConversationById(conversationId));
     }
 
-    @PostMapping("/{conversationId}/messages")
+    // Send a message to a conversation
+    @PostMapping(value = "/{conversationId}/messages", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
     public ResponseEntity<MessageDTO> sendMessage(@PathVariable Long conversationId, @RequestBody MessageDTO messageDTO) {
         return ResponseEntity.ok(conversationService.sendMessage(conversationId, messageDTO));
     }

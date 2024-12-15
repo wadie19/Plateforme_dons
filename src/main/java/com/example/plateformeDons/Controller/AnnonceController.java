@@ -29,7 +29,7 @@ public class AnnonceController {
 
     // Créer une annonce (accessible uniquement par un utilisateur authentifié)
     @PreAuthorize("isAuthenticated()")
-    @PostMapping
+    @PostMapping(consumes = "application/json", produces = "application/json")
     public ResponseEntity<Annonce> createAnnonce(@RequestBody Annonce annonce) {
         try {
             UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -47,7 +47,7 @@ public class AnnonceController {
     }
 
     // Obtenir toutes les annonces
-    @GetMapping
+    @GetMapping(produces = "application/json")
     public ResponseEntity<List<Annonce>> getAllAnnonces() {
         List<Annonce> annonces = annonceService.getAllAnnonces();
         return ResponseEntity.ok(annonces);
@@ -55,7 +55,7 @@ public class AnnonceController {
 
     // Mettre à jour une annonce (seul le propriétaire ou un administrateur peut le faire)
     @PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwnerOfAnnonce(#id)")
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = "application/json", produces = "application/json")
     public ResponseEntity<Annonce> updateAnnonce(@PathVariable Long id, @RequestBody Annonce annonce) {
         Annonce updatedAnnonce = annonceService.updateAnnonce(id, annonce);
         return updatedAnnonce != null ? ResponseEntity.ok(updatedAnnonce) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -70,7 +70,7 @@ public class AnnonceController {
     }
 
     // Rechercher des annonces avec des critères optionnels
-    @GetMapping("/recherche")
+    @GetMapping(value = "/recherche", produces = "application/json")
     public List<Annonce> rechercherAnnonces(
             @RequestParam(required = false) String zone,
             @RequestParam(required = false) String etat,
@@ -80,14 +80,14 @@ public class AnnonceController {
 
     // Obtenir les annonces d'un utilisateur spécifique
     @PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwnerOfAnnonce(#userId)")
-    @GetMapping("/user/{userId}")
+    @GetMapping(value = "/user/{userId}", produces = "application/json")
     public ResponseEntity<List<Annonce>> getAnnoncesByUser(@PathVariable Long userId) {
         List<Annonce> annonces = annonceService.getAnnoncesByUser(userId);
         return ResponseEntity.ok(annonces);
     }
 
     // Obtenir une annonce par son ID
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = "application/json")
     public ResponseEntity<AnnonceDTO> getAnnonceById(@PathVariable Long id) {
         Optional<Annonce> annonce = annonceService.getAnnonceById(id);
         return annonce.map(a -> ResponseEntity.ok(new AnnonceDTO(

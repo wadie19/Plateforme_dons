@@ -2,9 +2,9 @@ package com.example.plateformeDons.models;
 
 public class JwtResponse {
 
-    private String jwtToken;
-    private String username;
-    private Long userId; // Add userId field
+    private final String jwtToken;
+    private final String username;
+    private final Long userId; // Add userId field
 
     // Update the constructor to include userId
     public JwtResponse(String jwtToken, String username, Long userId) {
