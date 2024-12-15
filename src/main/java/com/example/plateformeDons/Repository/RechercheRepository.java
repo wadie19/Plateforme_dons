@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface RechercheRepository extends JpaRepository<Recherche, Long> {
-
     List<Recherche> findByUtilisateurId(Long utilisateurId);
+
+    boolean existsByUtilisateurIdAndZoneAndEtatAndMotCle(Long utilisateurId, String zone, String etat, String motCle);
 }
