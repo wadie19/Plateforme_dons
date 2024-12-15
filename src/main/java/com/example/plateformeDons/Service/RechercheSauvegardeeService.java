@@ -15,17 +15,25 @@ public class RechercheSauvegardeeService {
     private RechercheRepository rechercheRepository;
 
     public void sauvegarderRecherche(Utilisateur utilisateur, String zone, String etat, String motCle) {
-        Recherche recherche = new Recherche();
-        recherche.setUtilisateur(utilisateur);
-        recherche.setZone(zone);
-        recherche.setEtat(etat);
-        recherche.setMotCle(motCle);
+        try {
+            Recherche recherche = new Recherche();
+            recherche.setUtilisateur(utilisateur);
+            recherche.setZone(zone);
+            recherche.setEtat(etat);
+            recherche.setMotCle(motCle);
 
-        rechercheRepository.save(recherche);
+            rechercheRepository.save(recherche);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while saving the search for utilisateur with ID " + utilisateur.getId(), e);
+        }
     }
 
     // Récupère les recherches non notifiées pour l'utilisateur
     public List<Recherche> getRecherchesNonNotifiees(Long utilisateurId) {
-        return rechercheRepository.findByUtilisateurId(utilisateurId);
+        try {
+            return rechercheRepository.findByUtilisateurId(utilisateurId);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while fetching non-notified searches for utilisateur with ID " + utilisateurId, e);
+        }
     }
 }

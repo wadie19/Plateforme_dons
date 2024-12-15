@@ -22,25 +22,20 @@ public class AnnonceService {
     private NotificationService notificationService;
 
     public Annonce createAnnonce(Annonce annonce) {
-        annonce.setDatePublication(LocalDate.now());
-        Annonce savedAnnonce = annonceRepository.save(annonce);
+        try {
+            annonce.setDatePublication(LocalDate.now());
+            Annonce savedAnnonce = annonceRepository.save(annonce);
 
-        List<Recherche> recherches = rechercheRepository.findAll();
-        recherches.stream()
-                .filter(recherche -> isSearchMatched(savedAnnonce, recherche))
-                .forEach(recherche -> notificationService.sendNotification(recherche.getUtilisateur(), savedAnnonce));
+            List<Recherche> recherches = rechercheRepository.findAll();
+            recherches.stream()
+                    .filter(recherche -> isSearchMatched(savedAnnonce, recherche))
+                    .forEach(recherche -> notificationService.sendNotification(recherche.getUtilisateur(), savedAnnonce));
 
-        return savedAnnonce;
+            return savedAnnonce;
+        } catch (Exception e) {
+            throw new RuntimeException("Error while creating the annonce", e);
+        }
     }
-
-    /*private boolean isSearchMatched(Annonce annonce, Recherche recherche) {
-        // Vérifiez les correspondances entre les critères de la recherche et l'annonce
-        boolean matchesZone = annonce.getZoneGeographique().equalsIgnoreCase(recherche.getZone());
-        boolean matchesEtat = annonce.getEtat().equalsIgnoreCase(recherche.getEtat());
-        boolean matchesMotCle = annonce.getMotCles().stream()
-                .anyMatch(motCle -> motCle.equalsIgnoreCase(recherche.getMotCle()));
-        return matchesZone && matchesEtat && matchesMotCle;
-    }*/
 
     private boolean isSearchMatched(Annonce annonce, Recherche recherche) {
         return annonce.getZoneGeographique().equalsIgnoreCase(recherche.getZone())
@@ -50,42 +45,59 @@ public class AnnonceService {
     }
 
     public Optional<Annonce> getAnnonceById(Long id) {
-        return annonceRepository.findById(id);
+        try {
+            return annonceRepository.findById(id);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while fetching the annonce by ID", e);
+        }
     }
 
     public List<Annonce> getAllAnnonces() {
-        return annonceRepository.findAll();
+        try {
+            return annonceRepository.findAll();
+        } catch (Exception e) {
+            throw new RuntimeException("Error while fetching all annonces", e);
+        }
     }
 
     public Annonce updateAnnonce(Long id, Annonce annonce) {
-        if (annonceRepository.existsById(id)) {
-            annonce.setId(id);
-            return annonceRepository.save(annonce);
-        } else { return null;}
+        try {
+            if (annonceRepository.existsById(id)) {
+                annonce.setId(id);
+                return annonceRepository.save(annonce);
+            } else {
+                throw new RuntimeException("Annonce with ID " + id + " does not exist.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error while updating the annonce", e);
+        }
     }
 
     public void deleteAnnonce(Long id) {
-        annonceRepository.deleteById(id);
+        try {
+            if (annonceRepository.existsById(id)) {
+                annonceRepository.deleteById(id);
+            } else {
+                throw new RuntimeException("Annonce with ID " + id + " does not exist.");
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Error while deleting the annonce", e);
+        }
     }
 
-    /*public List<Annonce> rechercherAnnonces(String zone, String etat, String motCle) {
-        if (zone != null) {
-            return annonceRepository.findByZoneGeographique(zone);
-        }
-        if (etat != null) {
-            return annonceRepository.findByEtat(etat);
-        }
-        if (motCle != null) {
-            return annonceRepository.findByMotCle(motCle);
-        }
-        return annonceRepository.findAll();
-    }*/
-
     public List<Annonce> rechercherAnnonces(String zone, String etat, String motCle) {
-        return annonceRepository.findAll(AnnonceSpecification.withFilters(zone, etat, motCle));
+        try {
+            return annonceRepository.findAll(AnnonceSpecification.withFilters(zone, etat, motCle));
+        } catch (Exception e) {
+            throw new RuntimeException("Error while searching for annonces", e);
+        }
     }
 
     public List<Annonce> getAnnoncesByUser(Long userId) {
-        return annonceRepository.findByUtilisateurId(userId);
+        try {
+            return annonceRepository.findByUtilisateurId(userId);
+        } catch (Exception e) {
+            throw new RuntimeException("Error while fetching annonces for user with ID " + userId, e);
+        }
     }
 }

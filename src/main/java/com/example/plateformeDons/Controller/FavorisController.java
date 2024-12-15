@@ -4,6 +4,8 @@ import com.example.plateformeDons.DTO.AnnonceDTO;
 import com.example.plateformeDons.Service.FavorisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,20 +17,38 @@ public class FavorisController {
     @Autowired
     private FavorisService favorisService;
 
+    // Add annonce to favoris
     @PostMapping("/ajouter")
-    public ResponseEntity<String> ajouterAuxFavoris(@RequestParam Long utilisateurId, @RequestParam Long annonceId) {
-        favorisService.ajouterAuxFavoris(utilisateurId, annonceId);
+    public ResponseEntity<String> ajouterAuxFavoris(@RequestParam Long annonceId) {
+        // Get the currently logged-in user's ID from SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName(); // This assumes the username is used as the principal
+
+        // Call service method with the logged-in user's username
+        favorisService.ajouterAuxFavoris(currentUsername, annonceId);
+
         return ResponseEntity.ok("Annonce ajoutée aux favoris");
     }
 
+    // Remove annonce from favoris
     @DeleteMapping("/retirer")
-    public ResponseEntity<String> retirerDesFavoris(@RequestParam Long utilisateurId, @RequestParam Long annonceId) {
-        favorisService.retirerDesFavoris(utilisateurId, annonceId);
+    public ResponseEntity<String> retirerDesFavoris(@RequestParam Long annonceId) {
+        // Get the currently logged-in user's ID from SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName(); // This assumes the username is used as the principal
+
+        // Call service method with the logged-in user's username
+        favorisService.retirerDesFavoris(currentUsername, annonceId);
+
         return ResponseEntity.ok("Annonce retirée des favoris");
     }
 
-    @GetMapping("/{utilisateurId}")
-    public ResponseEntity<List<AnnonceDTO>> getFavoris(@PathVariable Long utilisateurId) {
-        return ResponseEntity.ok(favorisService.getFavoris(utilisateurId));
+    // Get favoris for the logged-in user
+    @GetMapping("/favoris")
+    public ResponseEntity<List<AnnonceDTO>> getFavoris() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName(); // Get the current logged-in username
+
+        return ResponseEntity.ok(favorisService.getFavorisByUsername(currentUsername));
     }
 }

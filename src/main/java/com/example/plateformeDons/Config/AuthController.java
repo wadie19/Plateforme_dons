@@ -27,38 +27,60 @@ public class AuthController {
     @Autowired
     private JWTHelper jwtHelper;
 
+    // Registration endpoint
     @PostMapping("/register")
-    public ResponseEntity<JwtResponse> register(@RequestBody JwtRequest request) {
-        Optional<Utilisateur> existingUser = utilisateurService.getUserByEmail(request.getEmail());
-        if (existingUser.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    public ResponseEntity<?> register(@RequestBody JwtRequest request) {
+        try {
+            // Check if email or username already exists
+            Optional<Utilisateur> existingUserByEmail = utilisateurService.getUserByEmail(request.getEmail());
+            if (existingUserByEmail.isPresent()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email already in use.");
+            }
+
+            Optional<Utilisateur> existingUserByUsername = utilisateurService.getUserByUsername(request.getUsername());
+            if (existingUserByUsername.isPresent()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already in use.");
+            }
+
+            // Create new user
+            Utilisateur newUser = new Utilisateur();
+            newUser.setEmail(request.getEmail());
+            newUser.setUsername(request.getUsername());
+            newUser.setPassword(passwordEncoder.encode(request.getPassword()));
+
+            utilisateurService.createUser(newUser);  // Make sure this persists the user
+
+            // Generate a JWT token after creating the user
+            String token = jwtHelper.generateToken(newUser);
+
+            // Respond with the generated token and username
+            JwtResponse response = new JwtResponse(token, newUser.getUsername(), newUser.getId());
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during registration: " + e.getMessage());
         }
-
-        Utilisateur newUser = new Utilisateur();
-        newUser.setEmail(request.getEmail());
-        newUser.setUsername(request.getUsername());
-        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-
-        utilisateurService.createUser(newUser);
-
-        // Générer un token JWT après la création de l'utilisateur
-        String token = jwtHelper.generateToken(newUser);
-
-        JwtResponse response = new JwtResponse(token, newUser.getUsername());
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    // Login endpoint
     @PostMapping("/login")
-    public ResponseEntity<JwtResponse> login(@RequestBody JwtRequest request) {
-        Optional<Utilisateur> user = utilisateurService.getUserByUsername(request.getUsername());
+    public ResponseEntity<?> login(@RequestBody JwtRequest request) {
+        try {
+            // Find user by username
+            Optional<Utilisateur> user = utilisateurService.getUserByUsername(request.getUsername());
 
-        if (user.isPresent() && passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
-            String token = jwtHelper.generateToken(user.get());
+            // Validate password and generate JWT token
+            if (user.isPresent() && passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
+                String token = jwtHelper.generateToken(user.get());
 
-            JwtResponse response = new JwtResponse(token, user.get().getUsername());
-            return ResponseEntity.ok(response);
+                // Respond with JWT, username, and user ID
+                JwtResponse response = new JwtResponse(token, user.get().getUsername(), user.get().getId());
+                return ResponseEntity.ok(response);
+            }
+
+            // Invalid credentials
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during login: " + e.getMessage());
         }
-
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 }

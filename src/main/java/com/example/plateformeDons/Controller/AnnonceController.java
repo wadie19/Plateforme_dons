@@ -5,9 +5,9 @@ import com.example.plateformeDons.Service.AnnonceService;
 import com.example.plateformeDons.Service.UtilisateurService;
 import com.example.plateformeDons.models.Annonce;
 import com.example.plateformeDons.models.Utilisateur;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -27,45 +27,41 @@ public class AnnonceController {
     @Autowired
     private UtilisateurService utilisateurService;
 
+    // Créer une annonce (accessible uniquement par un utilisateur authentifié)
     @PreAuthorize("isAuthenticated()")
     @PostMapping
     public ResponseEntity<Annonce> createAnnonce(@RequestBody Annonce annonce) {
+        try {
+            UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+            String username = userDetails.getUsername();
 
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = userDetails.getUsername();
+            Utilisateur utilisateur = utilisateurService.getUserByUsername(username)
+                    .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
 
-        Utilisateur utilisateur = utilisateurService.getUserByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
-
-        /*if (!annonce.getUtilisateur().getUsername().equals(username)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }*/
-
-        // Associer l'utilisateur à l'annonce
-        annonce.setUtilisateur(utilisateur);
-
-        Annonce createdAnnonce = annonceService.createAnnonce(annonce);
-
-        return new ResponseEntity<>(createdAnnonce, HttpStatus.CREATED);
+            annonce.setUtilisateur(utilisateur);
+            Annonce createdAnnonce = annonceService.createAnnonce(annonce);
+            return new ResponseEntity<>(createdAnnonce, HttpStatus.CREATED);
+        } catch (EntityNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
     }
 
+    // Obtenir toutes les annonces
     @GetMapping
     public ResponseEntity<List<Annonce>> getAllAnnonces() {
         List<Annonce> annonces = annonceService.getAllAnnonces();
         return ResponseEntity.ok(annonces);
     }
 
-
-    // API pour mettre à jour une annonce, accessible uniquement au propriétaire de l'annonce ou à un administrateur
+    // Mettre à jour une annonce (seul le propriétaire ou un administrateur peut le faire)
     @PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwnerOfAnnonce(#id)")
     @PutMapping("/{id}")
     public ResponseEntity<Annonce> updateAnnonce(@PathVariable Long id, @RequestBody Annonce annonce) {
         Annonce updatedAnnonce = annonceService.updateAnnonce(id, annonce);
-        return updatedAnnonce != null ? ResponseEntity.ok(updatedAnnonce)
-                                        : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        return updatedAnnonce != null ? ResponseEntity.ok(updatedAnnonce) : ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    // API pour supprimer une annonce, accessible uniquement au propriétaire de l'annonce ou à un administrateur
+    // Supprimer une annonce (seul le propriétaire ou un administrateur peut le faire)
     @PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwnerOfAnnonce(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAnnonce(@PathVariable Long id) {
@@ -73,14 +69,7 @@ public class AnnonceController {
         return ResponseEntity.noContent().build();
     }
 
-    /*@GetMapping("/recherche")
-    public List<Annonce> rechercherAnnonces(
-            @RequestParam(required = false) String zone,
-            @RequestParam(required = false) String etat,
-            @RequestParam(required = false) String motCle) {
-        return annonceService.rechercherAnnonces(zone, etat, motCle);
-    }*/
-
+    // Rechercher des annonces avec des critères optionnels
     @GetMapping("/recherche")
     public List<Annonce> rechercherAnnonces(
             @RequestParam(required = false) String zone,
@@ -89,6 +78,7 @@ public class AnnonceController {
         return annonceService.rechercherAnnonces(zone, etat, motCle);
     }
 
+    // Obtenir les annonces d'un utilisateur spécifique
     @PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwnerOfAnnonce(#userId)")
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<Annonce>> getAnnoncesByUser(@PathVariable Long userId) {
@@ -96,20 +86,17 @@ public class AnnonceController {
         return ResponseEntity.ok(annonces);
     }
 
-@GetMapping("/{id}")
-public ResponseEntity<AnnonceDTO> getAnnonceById(@PathVariable Long id) {
-    Optional<Annonce> annonce = annonceService.getAnnonceById(id);
-
-    return annonce.map(a -> ResponseEntity.ok(new AnnonceDTO(
-            a.getTitle(),
-            a.getDescription(),
-            a.getEtat(),
-            a.getDatePublication(),
-            a.getZoneGeographique(),
-            a.getModaliteDon()
-    )))
-    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
-}
-
-
+    // Obtenir une annonce par son ID
+    @GetMapping("/{id}")
+    public ResponseEntity<AnnonceDTO> getAnnonceById(@PathVariable Long id) {
+        Optional<Annonce> annonce = annonceService.getAnnonceById(id);
+        return annonce.map(a -> ResponseEntity.ok(new AnnonceDTO(
+                a.getTitle(),
+                a.getDescription(),
+                a.getEtat(),
+                a.getDatePublication(),
+                a.getZoneGeographique(),
+                a.getModaliteDon()
+        ))).orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
 }
