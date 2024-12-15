@@ -1,6 +1,7 @@
 package com.example.plateformeDons.Service;
 
-import com.example.plateformeDons.DTO.RechercheDTO;
+import com.example.plateformeDons.Exception.DuplicateRechercheException;
+import com.example.plateformeDons.Exception.RechercheNotFoundException;
 import com.example.plateformeDons.Repository.RechercheRepository;
 import com.example.plateformeDons.models.Recherche;
 import com.example.plateformeDons.models.Utilisateur;
@@ -15,6 +16,13 @@ public class RechercheSauvegardeeService {
     private RechercheRepository rechercheRepository;
 
     public void sauvegarderRecherche(Utilisateur utilisateur, String zone, String etat, String motCle) {
+        boolean exists = rechercheRepository.existsByUtilisateurIdAndZoneAndEtatAndMotCle(
+                utilisateur.getId(), zone, etat, motCle);
+
+        if (exists) {
+            throw new DuplicateRechercheException("Cette recherche existe déjà pour l'utilisateur.");
+        }
+
         Recherche recherche = new Recherche();
         recherche.setUtilisateur(utilisateur);
         recherche.setZone(zone);
@@ -24,8 +32,11 @@ public class RechercheSauvegardeeService {
         rechercheRepository.save(recherche);
     }
 
-    // Récupère les recherches non notifiées pour l'utilisateur
     public List<Recherche> getRecherchesNonNotifiees(Long utilisateurId) {
-        return rechercheRepository.findByUtilisateurId(utilisateurId);
+        List<Recherche> recherches = rechercheRepository.findByUtilisateurId(utilisateurId);
+        if (recherches.isEmpty()) {
+            throw new RechercheNotFoundException(utilisateurId, "non notifiée");
+        }
+        return recherches;
     }
 }

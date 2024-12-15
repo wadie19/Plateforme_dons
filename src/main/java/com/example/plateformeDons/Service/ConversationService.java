@@ -2,6 +2,8 @@ package com.example.plateformeDons.Service;
 
 import com.example.plateformeDons.DTO.ConversationDTO;
 import com.example.plateformeDons.DTO.MessageDTO;
+import com.example.plateformeDons.Exception.ConversationNotFoundException;
+import com.example.plateformeDons.Exception.MessageNotFoundException;
 import com.example.plateformeDons.Repository.ConversationRepository;
 import com.example.plateformeDons.Repository.MessageRepository;
 import com.example.plateformeDons.models.Annonce;
@@ -64,7 +66,7 @@ public class ConversationService {
 
     public ConversationDTO getConversationById(Long conversationId) {
         Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new IllegalArgumentException("Conversation introuvable avec l'ID : " + conversationId));
+                .orElseThrow(() -> new ConversationNotFoundException("Conversation not found with ID: " + conversationId));
 
         ConversationDTO dto = toDto(conversation);
 
@@ -76,9 +78,16 @@ public class ConversationService {
         return dto;
     }
 
+    public MessageDTO getMessageById(Long messageId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new MessageNotFoundException("Message not found with ID: " + messageId));
+
+        return toMessageDto(message);
+    }
+
     public MessageDTO sendMessage(Long conversationId, MessageDTO messageDTO) {
         Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new IllegalArgumentException("Conversation not found"));
+                .orElseThrow(() -> new ConversationNotFoundException("Conversation not found with ID: " + conversationId));
 
         Utilisateur sender = new Utilisateur();
         sender.setId(messageDTO.getSenderId());
