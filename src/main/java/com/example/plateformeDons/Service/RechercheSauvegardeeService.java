@@ -10,19 +10,19 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class RechercheSauvegardeeService {
-    @Autowired
-    private RechercheRepository rechercheRepository;
+    public class RechercheSauvegardeeService {
+        @Autowired
+        private RechercheRepository rechercheRepository;
 
-    public void sauvegarderRecherche(Utilisateur utilisateur, String zone, String etat, String motCle) {
-        Recherche recherche = new Recherche();
-        recherche.setUtilisateur(utilisateur);
-        recherche.setZone(zone);
-        recherche.setEtat(etat);
-        recherche.setMotCle(motCle);
+        public void sauvegarderRecherche(Utilisateur utilisateur, String zone, String etat, String motCle) {
+            Recherche recherche = new Recherche();
+            recherche.setUtilisateur(utilisateur);
+            recherche.setZone(zone);
+            recherche.setEtat(etat);
+            recherche.setMotCle(motCle);
 
-        rechercheRepository.save(recherche);
-    }
+            rechercheRepository.save(recherche);
+        }
 
     // Récupère les recherches non notifiées pour l'utilisateur
     public List<Recherche> getRecherchesNonNotifiees(Long utilisateurId) {

@@ -26,6 +26,7 @@ public class Utilisateur {
     @JsonIgnore
     private List<Recherche> recherches;
 
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "user_favoris",
