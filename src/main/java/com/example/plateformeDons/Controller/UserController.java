@@ -67,7 +67,7 @@ public class UserController {
     }
 
     // API pour supprimer un utilisateur, accessible uniquement aux administrateurs ou au propriétaire de l'utilisateur
-    //@PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwner(#id)")
+    @PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwner(#id)")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
@@ -75,7 +75,7 @@ public class UserController {
     }
 
     // API pour ajouter un rôle à un utilisateur
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/{userId}/roles")
     public ResponseEntity<Utilisateur> addRoleToUser(@PathVariable Long userId, @RequestBody Role role) {
         Utilisateur updatedUser = userService.addRoleToUser(userId, role);
@@ -83,7 +83,7 @@ public class UserController {
     }
 
     // API pour retirer un rôle d'un utilisateur
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{userId}/roles")
     public ResponseEntity<Utilisateur> removeRoleFromUser(@PathVariable Long userId, @RequestBody Role role) {
         Utilisateur updatedUser = userService.removeRoleFromUser(userId, role);
@@ -91,7 +91,7 @@ public class UserController {
     }
 
     // API pour récupérer les rôles d'un utilisateur
-    //@PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwner(#userId)")
+    @PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwner(#userId)")
     @GetMapping("/{userId}/roles")
     public ResponseEntity<Set<Role>> getRolesByUserId(@PathVariable Long userId) {
         Set<Role> roles = userService.getRolesByUserId(userId);

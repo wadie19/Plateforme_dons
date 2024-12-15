@@ -28,10 +28,14 @@ public class AuthController {
     private JWTHelper jwtHelper;
 
     @PostMapping("/register")
-    public ResponseEntity<JwtResponse> register(@RequestBody JwtRequest request) {
+    public ResponseEntity<?> register(@RequestBody JwtRequest request) {
         Optional<Utilisateur> existingUser = utilisateurService.getUserByEmail(request.getEmail());
+
         if (existingUser.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Email déjà utilisé !");
+        }
+        if (utilisateurService.getUserByUsername(request.getUsername()).isPresent()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Nom d'utilisateur déjà utilisé !");
         }
 
         Utilisateur newUser = new Utilisateur();
@@ -44,7 +48,7 @@ public class AuthController {
         // Générer un token JWT après la création de l'utilisateur
         String token = jwtHelper.generateToken(newUser);
 
-        JwtResponse response = new JwtResponse(token, newUser.getUsername());
+        JwtResponse response = new JwtResponse(token, newUser.getUsername(), newUser.getId());
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
@@ -55,7 +59,7 @@ public class AuthController {
         if (user.isPresent() && passwordEncoder.matches(request.getPassword(), user.get().getPassword())) {
             String token = jwtHelper.generateToken(user.get());
 
-            JwtResponse response = new JwtResponse(token, user.get().getUsername());
+            JwtResponse response = new JwtResponse(token, user.get().getUsername(), user.get().getId());
             return ResponseEntity.ok(response);
         }
 

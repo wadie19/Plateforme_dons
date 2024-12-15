@@ -58,7 +58,7 @@ public class FavorisService {
         dto.setTitle(annonce.getTitle());
         dto.setDescription(annonce.getDescription());
         dto.setEtat(annonce.getEtat());
-        dto.setEstFavori(true); // Toujours true ici car ce sont les favoris
+        dto.setEstFavori(true);
         return dto;
     }
 }

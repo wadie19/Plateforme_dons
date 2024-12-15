@@ -18,7 +18,7 @@ public class JWTHelper {
     private String SECRET_KEY;
 
     // Durée d'expiration du token (en millisecondes)
-    @Value("${jwt.expiration-time}") // Assurez-vous que cette propriété est définie dans votre application.properties
+    @Value("${jwt.expiration-time}")
     private long EXPIRATION_TIME;
 
     // Générer un token JWT pour un utilisateur
@@ -26,6 +26,7 @@ public class JWTHelper {
         try {
             return Jwts.builder()
                     .setSubject(user.getUsername())
+                    .claim("userId", user.getId())
                     .setIssuedAt(new Date())
                     .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME)) // Utilisation de la variable configurable
                     .signWith(SignatureAlgorithm.HS256, SECRET_KEY) // Utilisation de la clé secrète injectée
