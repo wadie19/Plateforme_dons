@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
@@ -88,7 +89,28 @@ public String processLogin(
         return "login"; // Return to login page with error
     }
 
+    
+
    
+}
+@GetMapping("/logout-user")
+public String logout(HttpServletRequest request, HttpServletResponse response) {
+  // Invalidate the JWT token (remove the cookie)
+ 
+       Cookie cookie = new Cookie("jwtToken", "jwtToken");
+            cookie.setHttpOnly(true);  
+            cookie.setSecure(true);   
+            cookie.setMaxAge(0);  
+            cookie.setPath("/");  
+            response.addCookie(cookie);
+
+  // Clear HttpSession if needed (optional)
+  HttpSession session = request.getSession(false);
+  if (session != null) {
+    session.invalidate();
+  }
+
+  return "redirect:/"; 
 }
 
 }
