@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import org.springframework.http.MediaType;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -22,14 +24,14 @@ public class UserController {
 
     // Create a new user, only accessible to admins
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping
+    @PostMapping(value = "", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
     public ResponseEntity<Utilisateur> createUser(@RequestBody Utilisateur user) {
         Utilisateur createdUser = userService.createUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
     }
 
     // Get all users
-    @GetMapping
+    @GetMapping(value = "", produces = MediaType.ALL_VALUE)
     public ResponseEntity<List<Utilisateur>> getAllUsers() {
         List<Utilisateur> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
@@ -37,7 +39,7 @@ public class UserController {
 
     // Get a user by ID, accessible only for authenticated users
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/{id}")
+    @GetMapping(value = "/{id}", produces = MediaType.ALL_VALUE)
     public ResponseEntity<Utilisateur> getUserById(@PathVariable Long id) {
         Optional<Utilisateur> user = userService.getUserById(id);
         return user.map(ResponseEntity::ok)
@@ -46,7 +48,7 @@ public class UserController {
 
     // Get a user by username, accessible only for authenticated users
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/username/{username}")
+    @GetMapping(value = "/username/{username}", produces = MediaType.ALL_VALUE)
     public ResponseEntity<Utilisateur> getUserByUsername(@PathVariable String username) {
         Optional<Utilisateur> user = userService.getUserByUsername(username);
         return user.map(ResponseEntity::ok)
@@ -55,7 +57,7 @@ public class UserController {
 
     // Get a user by email, accessible only for authenticated users
     @PreAuthorize("isAuthenticated()")
-    @GetMapping("/email/{email}")
+    @GetMapping(value = "/email/{email}", produces = MediaType.ALL_VALUE)
     public ResponseEntity<Utilisateur> getUserByEmail(@PathVariable String email) {
         Optional<Utilisateur> user = userService.getUserByEmail(email);
         return user.map(ResponseEntity::ok)
@@ -64,7 +66,7 @@ public class UserController {
 
     // Update user details, accessible to admins or the user itself
     @PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwner(#id)")
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
     public ResponseEntity<Utilisateur> updateUser(@PathVariable Long id, @RequestBody Utilisateur user) {
         user.setId(id);
         Utilisateur updatedUser = userService.updateUser(user);
@@ -73,7 +75,7 @@ public class UserController {
 
     // Delete user, accessible to admins or the user itself
     @PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwner(#id)")
-    @DeleteMapping("/{id}")
+    @DeleteMapping(value = "/{id}", produces = MediaType.ALL_VALUE)
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
         return ResponseEntity.noContent().build();
@@ -81,7 +83,7 @@ public class UserController {
 
     // Add a role to a user, accessible only to admins
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/{userId}/roles")
+    @PostMapping(value = "/{userId}/roles", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
     public ResponseEntity<Utilisateur> addRoleToUser(@PathVariable Long userId, @RequestBody Role role) {
         Utilisateur updatedUser = userService.addRoleToUser(userId, role);
         return ResponseEntity.ok(updatedUser);
@@ -89,7 +91,7 @@ public class UserController {
 
     // Remove a role from a user, accessible only to admins
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{userId}/roles")
+    @DeleteMapping(value = "/{userId}/roles", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
     public ResponseEntity<Utilisateur> removeRoleFromUser(@PathVariable Long userId, @RequestBody Role role) {
         Utilisateur updatedUser = userService.removeRoleFromUser(userId, role);
         return ResponseEntity.ok(updatedUser);
@@ -97,7 +99,7 @@ public class UserController {
 
     // Get roles of a user, accessible to admins or the user themselves
     @PreAuthorize("hasRole('ADMIN') or @userSecurity.isOwner(#userId)")
-    @GetMapping("/{userId}/roles")
+    @GetMapping(value = "/{userId}/roles", produces = MediaType.ALL_VALUE)
     public ResponseEntity<Set<Role>> getRolesByUserId(@PathVariable Long userId) {
         Set<Role> roles = userService.getRolesByUserId(userId);
         return ResponseEntity.ok(roles);

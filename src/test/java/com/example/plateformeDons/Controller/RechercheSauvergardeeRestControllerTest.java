@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
@@ -133,7 +134,7 @@ public class RechercheSauvergardeeRestControllerTest {
     public void testGetSavedSearches_Empty() throws Exception {
         // Simulating service call returning an empty list
         when(utilisateurService.getUserByUsername("testuser")).thenReturn(Optional.of(mockUtilisateur));
-        when(rechercheSauvegardeeService.getRecherchesNonNotifiees(mockUtilisateur.getId())).thenReturn(Arrays.asList());
+        when(rechercheSauvegardeeService.getRecherchesNonNotifiees(mockUtilisateur.getId())).thenReturn(List.of());
 
         // Perform GET request to retrieve saved searches
         mockMvc.perform(get("/api/recherches/list"))
