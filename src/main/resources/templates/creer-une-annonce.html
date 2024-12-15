@@ -52,17 +52,15 @@
               <option value="" th:selected="${etat == null || etat == ''}">
                 Sélectionner un état
               </option>
-              <option value="neuf" th:selected="${etat == 'neuf'}">Neuf</option>
-              <option value="bon" th:selected="${etat == 'bon'}">Bon</option>
-              <option value="usagé" th:selected="${etat == 'usagé'}">
+              <option value="Neuf" th:selected="${etat == 'neuf'}">Neuf</option>
+              <option value="Bon" th:selected="${etat == 'bon'}">Bon</option>
+              <option value="Usagé" th:selected="${etat == 'usagé'}">
                 Usagé
               </option>
             </select>
           </div>
           <div class="mb-3">
-            <label for="zoneGeographique" class="form-label"
-              >Ville</label
-            >
+            <label for="zoneGeographique" class="form-label">Ville</label>
             <input
               type="text"
               class="form-control"
@@ -74,14 +72,32 @@
           </div>
           <div class="mb-3">
             <label for="modaliteDon" class="form-label">Modalité de Don</label>
-            <input
-              type="text"
-              class="form-control"
+
+            <select
               id="modaliteDon"
               name="modaliteDon"
-              placeholder="Entrez les modalités de don"
+              class="form-select"
               required
-            />
+            >
+              <option
+                value=""
+                th:selected="${modaliteDon == null || etat == ''}"
+              >
+                Sélectionner la modalité de don
+              </option>
+              <option
+                value="En main propre"
+                th:selected="${modaliteDon == 'En main propre'}"
+              >
+                En main propre
+              </option>
+              <option
+                value="Peut être envoyé"
+                th:selected="${modaliteDon == 'Peut être envoyé'}"
+              >
+                Peut être envoyé
+              </option>
+            </select>
           </div>
           <div class="mb-3">
             <label for="motCles" class="form-label"
