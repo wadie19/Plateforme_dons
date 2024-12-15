@@ -9,6 +9,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.example.plateformeDons.models.Annonce;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+
 @Controller
 public class AnnonceDetailsController {  // Renamed class
 
@@ -27,10 +30,20 @@ public class AnnonceDetailsController {  // Renamed class
      * @return The name of the Thymeleaf template for the annonce details page.
      */
     @GetMapping("/annonces/{id}")
-    public String annonceDetails(@PathVariable("id") Long id, Model model) {
+    public String annonceDetails(@PathVariable("id") Long id, Model model, HttpServletRequest request) {
         // Fetch the specific annonce from the API
         Annonce annonce = fetchAnnonceFromApi(id);
-
+    boolean isLoggedIn = false;
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+        for (Cookie cookie : cookies) {
+            if ("jwtToken".equals(cookie.getName()) && cookie.getValue() != null) {
+                isLoggedIn = true;
+                break;
+            }
+        }
+    }
+        model.addAttribute("isLoggedIn", isLoggedIn);  
         // Add the annonce to the model
         model.addAttribute("annonce", annonce);
 

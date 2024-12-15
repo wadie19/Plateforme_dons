@@ -1,41 +1,61 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{layout :: head}"></head>
+  <head th:replace="layout :: head"></head>
+
   <body>
-    <!-- Navbar: Conditionally render based on login status -->
     <div th:replace="~{layout :: navbar}" th:if="${!isLoggedIn}"></div>
     <div th:replace="~{layout :: dashboard-navbar}" th:if="${isLoggedIn}"></div>
 
-    <!-- Hero Section -->
-    <div class="bg-primary text-white" style="height: 60vh">
-      <div
-        class="container d-flex justify-content-center align-items-center h-100 text-center"
-      >
-        <div>
-          <h2
-            class="display-3 fw-bold animate__animated animate__fadeIn animate__delay-1s"
-          >
-            Plateforme de dons d’objets entre particuliers
-          </h2>
+    <div class="container mb-4 mt-4" style="height: 100%; min-height: 80vh">
+      <!-- Filter Form -->
+      <form method="get" action="/recherche" class="row align-items-end">
+        <input type="hidden" name="motCle" th:value="${motCle}" />
 
-          <p class="lead fs-4 mb-4">
-            Donnez et récupérez en quelques clics des objets proches de chez
-            vous !
-          </p>
-
-          <a
-            href="/annonces"
-            class="btn btn-light btn-lg shadow-lg rounded-pill px-4 py-2 fs-5 fw-bold text-dark hover-effect"
-          >
-            Voir tous les annonces
-          </a>
+        <div class="col-md-3">
+          <label for="zone" class="form-label">Ville</label>
+          <input
+            th:value="${zone}"
+            type="text"
+            class="form-control"
+            id="zone"
+            name="zone"
+            placeholder="Entrer la ville"
+          />
         </div>
-      </div>
-    </div>
 
-    <div class="container">
-      <h2 class="mb-4 mt-4">Annonces Récentes</h2>
-      <div class="row">
+        <div class="col-md-3">
+          <label for="etat" class="form-label">État</label>
+          <select id="etat" name="etat" class="form-select">
+            <option value="" th:selected="${etat == null || etat == ''}">
+              Sélectionner l'état de l'objet
+            </option>
+            <option value="neuf" th:selected="${etat == 'neuf'}">Neuf</option>
+            <option value="bon" th:selected="${etat == 'bon'}">Bon</option>
+            <option value="usagé" th:selected="${etat == 'usagé'}">
+              Usagé
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-3 d-flex">
+          <button type="submit" class="btn btn-primary">Filtrer</button>
+        </div>
+      </form>
+
+      <h2 class="mb-4 mt-4">
+        Résultats de recherche pour
+        <span style="font-weight: bold; color: blue" th:text="${motCle}"></span>
+      </h2>
+
+      <!-- Check if annonces list is empty -->
+      <div th:if="${#lists.isEmpty(annonces)}">
+        <p class="text-center text-muted">
+          Aucun résultat trouvé pour votre recherche.
+        </p>
+      </div>
+
+      <!-- Display results if annonces is not empty -->
+      <div class="row" th:if="${!#lists.isEmpty(annonces)}">
         <div class="col-md-4 mb-4" th:each="annonce : ${annonces}">
           <div class="card h-100">
             <img
@@ -98,6 +118,6 @@
       </div>
     </div>
 
-    <div th:replace="~{layout :: footer}"></div>
+    <div th:replace="layout :: footer"></div>
   </body>
 </html>

@@ -2,7 +2,7 @@ package com.example.plateformeDons.models;
 
 import com.example.plateformeDons.Security.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Entity;
+
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -25,7 +25,8 @@ public class Utilisateur {
     @OneToMany(mappedBy = "utilisateur", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Recherche> recherches;
-
+    
+    @JsonIgnore
     @ManyToMany
     @JoinTable(
             name = "user_favoris",

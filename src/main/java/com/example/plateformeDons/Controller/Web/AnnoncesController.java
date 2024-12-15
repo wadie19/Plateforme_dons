@@ -10,36 +10,34 @@ import com.example.plateformeDons.models.Annonce;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 
 import java.util.Arrays;
 import java.util.List;
 
 @Controller
-public class HomeController {
+public class AnnoncesController {
 
     private final RestTemplate restTemplate;
 
     @Autowired
-    public HomeController(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
+    public AnnoncesController(RestTemplate restTemplate) {
+    this.restTemplate = restTemplate;
     }
 
     /**
      * Display the home page with ads fetched from the API.
      *
      * @param model Model to pass data to the view.
-     * @param session HttpSession to check for the JWT token.
      * @return The name of the Thymeleaf template for the home page.
      */
-    @GetMapping("/")
+    @GetMapping("/annonces")
     public String home(Model model, HttpServletRequest request) {
         // Fetch ads from the API
         List<Annonce> annonces = fetchAdsFromApi();
 
-       // Check if the jwtToken cookie exists
-    boolean isLoggedIn = false;
-    Cookie[] cookies = request.getCookies();
+
+            boolean isLoggedIn = false;
+            Cookie[] cookies = request.getCookies();
     if (cookies != null) {
         for (Cookie cookie : cookies) {
             if ("jwtToken".equals(cookie.getName()) && cookie.getValue() != null) {
@@ -48,11 +46,12 @@ public class HomeController {
             }
         }
     }
-        model.addAttribute("isLoggedIn", isLoggedIn);  
+        model.addAttribute("isLoggedIn", isLoggedIn); 
+        // Add ads to the model
         model.addAttribute("annonces", annonces);
 
-        // Return the home page template
-        return "home";
+        // Return the annonces page template
+        return "annonces";
     }
 
     /**
@@ -61,7 +60,7 @@ public class HomeController {
      * @return List of ads.
      */
     private List<Annonce> fetchAdsFromApi() {
-        String apiUrl = "http://localhost:8080/api/annonces"; // Adjust the URL if needed
+        String apiUrl = "http://localhost:8080/api/annonces";
         Annonce[] adsArray = restTemplate.getForObject(apiUrl, Annonce[].class);
         return Arrays.asList(adsArray);
     }

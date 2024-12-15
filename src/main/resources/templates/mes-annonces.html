@@ -1,40 +1,13 @@
 <!DOCTYPE html>
 <html lang="fr" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="~{layout :: head}"></head>
+  <head th:replace="layout :: head"></head>
+
   <body>
-    <!-- Navbar: Conditionally render based on login status -->
     <div th:replace="~{layout :: navbar}" th:if="${!isLoggedIn}"></div>
     <div th:replace="~{layout :: dashboard-navbar}" th:if="${isLoggedIn}"></div>
 
-    <!-- Hero Section -->
-    <div class="bg-primary text-white" style="height: 60vh">
-      <div
-        class="container d-flex justify-content-center align-items-center h-100 text-center"
-      >
-        <div>
-          <h2
-            class="display-3 fw-bold animate__animated animate__fadeIn animate__delay-1s"
-          >
-            Plateforme de dons d’objets entre particuliers
-          </h2>
-
-          <p class="lead fs-4 mb-4">
-            Donnez et récupérez en quelques clics des objets proches de chez
-            vous !
-          </p>
-
-          <a
-            href="/annonces"
-            class="btn btn-light btn-lg shadow-lg rounded-pill px-4 py-2 fs-5 fw-bold text-dark hover-effect"
-          >
-            Voir tous les annonces
-          </a>
-        </div>
-      </div>
-    </div>
-
     <div class="container">
-      <h2 class="mb-4 mt-4">Annonces Récentes</h2>
+      <h2 class="mb-4 mt-4">Mes Annonces</h2>
       <div class="row">
         <div class="col-md-4 mb-4" th:each="annonce : ${annonces}">
           <div class="card h-100">
@@ -98,6 +71,6 @@
       </div>
     </div>
 
-    <div th:replace="~{layout :: footer}"></div>
+    <div th:replace="layout :: footer"></div>
   </body>
 </html>
