@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="layout :: head"></head>
+  <body>
+    <div th:replace="~{layout :: navbar}" th:if="${!isLoggedIn}"></div>
+    <div th:replace="~{layout :: dashboard-navbar}" th:if="${isLoggedIn}"></div>
+    <h1 class="text-center mb-4 mt-5">Créer une Annonce</h1>
+
+    <div
+      class="container my-5 d-flex align-items-center justify-content-center"
+    >
+      <div class="card shadow p-4" style="width: 100%; max-width: 600px">
+        <!-- Error message -->
+        <div
+          th:if="${error}"
+          class="alert alert-danger"
+          th:text="${error}"
+        ></div>
+        <!-- Success message -->
+        <div
+          th:if="${message}"
+          class="alert alert-success"
+          th:text="${message}"
+        ></div>
+
+        <form action="/creer-une-annonce" method="POST">
+          <div class="mb-3">
+            <label for="title" class="form-label">Titre</label>
+            <input
+              type="text"
+              class="form-control"
+              id="title"
+              name="title"
+              placeholder="Entrez le titre de l'annonce"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea
+              class="form-control"
+              id="description"
+              name="description"
+              rows="4"
+              placeholder="Entrez la description"
+              required
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="etat" class="form-label">État</label>
+            <select id="etat" name="etat" class="form-select" required>
+              <option value="" th:selected="${etat == null || etat == ''}">
+                Sélectionner un état
+              </option>
+              <option value="neuf" th:selected="${etat == 'neuf'}">Neuf</option>
+              <option value="bon" th:selected="${etat == 'bon'}">Bon</option>
+              <option value="usagé" th:selected="${etat == 'usagé'}">
+                Usagé
+              </option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="zoneGeographique" class="form-label"
+              >Ville</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="zoneGeographique"
+              name="zoneGeographique"
+              placeholder="Entrez la ville"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="modaliteDon" class="form-label">Modalité de Don</label>
+            <input
+              type="text"
+              class="form-control"
+              id="modaliteDon"
+              name="modaliteDon"
+              placeholder="Entrez les modalités de don"
+              required
+            />
+          </div>
+          <div class="mb-3">
+            <label for="motCles" class="form-label"
+              >Mots-clés (séparés par des virgules)</label
+            >
+            <input
+              type="text"
+              class="form-control"
+              id="motCles"
+              name="motCles"
+              placeholder="Entrez les mots-clés"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary w-100">
+            Créer l'Annonce
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <div th:replace="layout :: footer"></div>
+  </body>
+</html>

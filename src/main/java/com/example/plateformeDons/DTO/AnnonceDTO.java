@@ -1,22 +1,33 @@
 package com.example.plateformeDons.DTO;
 
+import java.time.LocalDate;
+
 public class AnnonceDTO {
-    private Long id;
+
     private String title;
     private String description;
     private String etat;
-    private boolean estFavori; // Indique si cette annonce est en favoris pour l'utilisateur connecté
-    // Getters et setters
+    private LocalDate datePublication;
+    private String zoneGeographique;
+    private String modaliteDon;
+    private Long id;
+    private boolean estFavori; 
 
 
-    public Long getId() {
-        return id;
+      public AnnonceDTO( ) {
+       
+    }
+    public AnnonceDTO(String title, String description, String etat, LocalDate datePublication, String zoneGeographique, String modaliteDon) {
+        this.title = title;
+        this.description = description;
+        this.etat = etat;
+        this.datePublication = datePublication;
+        this.zoneGeographique = zoneGeographique;
+        this.modaliteDon = modaliteDon;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
 
+    // Getters and Setters
     public String getTitle() {
         return title;
     }
@@ -41,11 +52,43 @@ public class AnnonceDTO {
         this.etat = etat;
     }
 
-    public boolean isEstFavori() {
-        return estFavori;
+    public LocalDate getDatePublication() {
+        return datePublication;
     }
 
-    public void setEstFavori(boolean estFavori) {
-        this.estFavori = estFavori;
+    public void setDatePublication(LocalDate datePublication) {
+        this.datePublication = datePublication;
     }
+
+    public String getZoneGeographique() {
+        return zoneGeographique;
+    }
+
+    public void setZoneGeographique(String zoneGeographique) {
+        this.zoneGeographique = zoneGeographique;
+    }
+
+    public String getModaliteDon() {
+        return modaliteDon;
+    }
+
+    public void setModaliteDon(String modaliteDon) {
+        this.modaliteDon = modaliteDon;
+
+    }
+
+
+      public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+     public boolean isEstFavori() {
+        return estFavori;
+    }
+    public void setEstFavori(boolean b) {
+ this.estFavori = b;    }
 }

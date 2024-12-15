@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head th:replace="layout :: head">
+    <!-- Add Font Awesome CSS link in the head -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <div th:replace="~{layout :: navbar}" th:if="${!isLoggedIn}"></div>
+    <div th:replace="~{layout :: dashboard-navbar}" th:if="${isLoggedIn}"></div>
+
+    <div
+      class="container mt-5 d-flex justify-content-center align-items-center"
+      style="min-height: 100vh"
+    >
+      <div class="row w-100">
+        <div class="col-md-8 col-lg-6 mx-auto">
+          <div class="card" style="width: 100%; max-width: 600px">
+            <img
+              src="https://via.placeholder.com/600x400"
+              class="card-img-top"
+              alt="Annonce Image"
+            />
+            <div class="card-body">
+              <h2 class="card-title" th:text="${annonce.title}"></h2>
+
+              <p class="card-text">
+                <svg
+                  width="20px"
+                  height="20px"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M3.37892 10.2236L8 16L12.6211 10.2236C13.5137 9.10788 14 7.72154 14 6.29266V6C14 2.68629 11.3137 0 8 0C4.68629 0 2 2.68629 2 6V6.29266C2 7.72154 2.4863 9.10788 3.37892 10.2236ZM8 8C9.10457 8 10 7.10457 10 6C10 4.89543 9.10457 4 8 4C6.89543 4 6 4.89543 6 6C6 7.10457 6.89543 8 8 8Z"
+                    fill="#000000"
+                  />
+                </svg>
+                <span th:text="${annonce.zoneGeographique}"></span>
+              </p>
+
+              <p class="card-text">
+                <span th:text="${annonce.description}"></span>
+              </p>
+              <p class="card-text">
+                <strong>État :</strong>
+                <span th:text="${annonce.etat}"></span>
+              </p>
+
+              <p class="card-text">
+                <strong>Date de publication :</strong>
+                <span th:text="${annonce.datePublication}"></span>
+              </p>
+
+              <p class="card-text">
+                <strong>Modalité de don :</strong>
+                <span th:text="${annonce.modaliteDon}"></span>
+              </p>
+
+              <div class="mt-3">
+                <button class="btn btn-primary" style="margin-right: 1rem">
+                  <i class="fas fa-envelope"></i> Contacter le vendeur
+                </button>
+
+                <button class="btn btn-outline-primary">
+                  <i class="fas fa-heart"></i> Ajouter aux favoris
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="layout :: footer"></div>
+  </body>
+</html>

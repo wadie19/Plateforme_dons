@@ -10,12 +10,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class AppConfig {
 
+    // UserDetailsService Bean for in-memory authentication
     @Bean
-    public UserDetailsService userDetailsService(){
+    public UserDetailsService userDetailsService() {
         UserDetails user = User.builder()
                 .username("marouene")
                 .password(passwordEncoder().encode("abc"))
@@ -31,13 +33,21 @@ public class AppConfig {
         return new InMemoryUserDetailsManager(user, user1);
     }
 
+    // PasswordEncoder Bean for encoding passwords
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // AuthenticationManager Bean for authentication process
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration builder) throws Exception {
         return builder.getAuthenticationManager();
+    }
+
+    // RestTemplate Bean for API requests
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
     }
 }

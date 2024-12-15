@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr" xmlns:th="http://www.thymeleaf.org">
+  <head th:replace="layout :: head"></head>
+
+  <body>
+    <div th:replace="~{layout :: navbar}" th:if="${!isLoggedIn}"></div>
+    <div th:replace="~{layout :: dashboard-navbar}" th:if="${isLoggedIn}"></div>
+
+    <div class="container mb-4 mt-4" style="height: 100%; min-height: 80vh">
+      <!-- Filter Form -->
+      <form method="get" action="/recherche" class="row align-items-end">
+        <input type="hidden" name="motCle" th:value="${motCle}" />
+
+        <div class="col-md-3">
+          <label for="zone" class="form-label">Ville</label>
+          <input
+            th:value="${zone}"
+            type="text"
+            class="form-control"
+            id="zone"
+            name="zone"
+            placeholder="Entrer la ville"
+          />
+        </div>
+
+        <div class="col-md-3">
+          <label for="etat" class="form-label">État</label>
+          <select id="etat" name="etat" class="form-select">
+            <option value="" th:selected="${etat == null || etat == ''}">
+              Sélectionner l'état de l'objet
+            </option>
+            <option value="neuf" th:selected="${etat == 'neuf'}">Neuf</option>
+            <option value="bon" th:selected="${etat == 'bon'}">Bon</option>
+            <option value="usagé" th:selected="${etat == 'usagé'}">
+              Usagé
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-3 d-flex">
+          <button type="submit" class="btn btn-primary">Filtrer</button>
+        </div>
+      </form>
+
+      <h2 class="mb-4 mt-4">
+        Résultats de recherche pour
+        <span style="font-weight: bold; color: blue" th:text="${motCle}"></span>
+      </h2>
+
+      <!-- Check if annonces list is empty -->
+      <div th:if="${#lists.isEmpty(annonces)}">
+        <p class="text-center text-muted">
+          Aucun résultat trouvé pour votre recherche.
+        </p>
+      </div>
+
+      <!-- Display results if annonces is not empty -->
+      <div class="row" th:if="${!#lists.isEmpty(annonces)}">
+        <div class="col-md-4 mb-4" th:each="annonce : ${annonces}">
+          <div class="card h-100">
+            <img
+              src="https://via.placeholder.com/300x200"
+              class="card-img-top"
+              alt="Image de l'annonce"
+            />
+            <div class="card-body">
+              <a
+                class="card-title"
+                th:text="${annonce.title}"
+                th:href="@{/annonces/{id}(id=${annonce.id})}"
+                style="
+                  font-size: x-large;
+                  text-decoration: none;
+                  font-weight: 500;
+                  transition: text-decoration 0.3s ease;
+                "
+                onmouseover="this.style.textDecoration='underline'"
+                onmouseout="this.style.textDecoration='none'"
+              >
+              </a>
+
+              <p class="card-text">
+                <svg
+                  width="20px"
+                  height="20px"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M3.37892 10.2236L8 16L12.6211 10.2236C13.5137 9.10788 14 7.72154 14 6.29266V6C14 2.68629 11.3137 0 8 0C4.68629 0 2 2.68629 2 6V6.29266C2 7.72154 2.4863 9.10788 3.37892 10.2236ZM8 8C9.10457 8 10 7.10457 10 6C10 4.89543 9.10457 4 8 4C6.89543 4 6 4.89543 6 6C6 7.10457 6.89543 8 8 8Z"
+                    fill="#000000"
+                  />
+                </svg>
+                <span th:text="${annonce.zoneGeographique}"></span>
+              </p>
+
+              <p class="card-text">
+                <span
+                  th:text="${annonce.etat}"
+                  class="badge bg-primary"
+                  style="margin-right: 0.5rem; padding: 0.5rem"
+                >
+                </span>
+                <span
+                  th:each="motcle : ${annonce.motCles}"
+                  th:text="${motcle}"
+                  class="badge bg-success"
+                  style="margin-right: 0.5rem; padding: 0.5rem"
+                >
+                </span>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div th:replace="layout :: footer"></div>
+  </body>
+</html>
