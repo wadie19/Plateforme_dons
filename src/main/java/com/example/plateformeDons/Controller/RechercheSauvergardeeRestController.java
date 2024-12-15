@@ -8,11 +8,10 @@ import com.example.plateformeDons.models.Utilisateur;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import org.springframework.http.MediaType;
 
 import java.util.List;
 
@@ -26,8 +25,8 @@ public class RechercheSauvergardeeRestController {
     @Autowired
     private UtilisateurService utilisateurService;
 
-    // Save a search
-    @PostMapping(value = "/sauvegarder", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
+    //@PreAuthorize("isAuthenticated()")
+    @PostMapping("/sauvegarder")
     public ResponseEntity<String> sauvegarderRecherche(@RequestParam String zone, @RequestParam String etat, @RequestParam String motCle) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();
@@ -43,8 +42,8 @@ public class RechercheSauvergardeeRestController {
         }
     }
 
-    // Get saved searches
-    @GetMapping(value = "/list", produces = MediaType.ALL_VALUE)
+    //@PreAuthorize("isAuthenticated()")
+    @GetMapping("/list")
     public ResponseEntity<List<Recherche>> getSavedSearches() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = userDetails.getUsername();

@@ -98,10 +98,13 @@ public class FavorisControllerTest {
         when(favorisService.getFavorisByUsername("testUser")).thenReturn(favorisList);
 
         // Perform GET request to retrieve favorites
-        mockMvc.perform(get("/api/favoris/favoris"))
+        mockMvc.perform(get("/api/favoris/favoris")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("Test Title 1"))
                 .andExpect(jsonPath("$[1].title").value("Test Title 2"));
+
 
         verify(favorisService, times(1)).getFavorisByUsername("testUser");
     }

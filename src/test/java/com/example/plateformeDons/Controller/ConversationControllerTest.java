@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
@@ -40,14 +41,16 @@ public class ConversationControllerTest {
         // Setup mock conversation DTO
         ConversationDTO conversationDTO = new ConversationDTO();
         conversationDTO.setId(1L);
-        conversationDTO.setTitre("Test Conversation"); // Use the correct field 'titre'
+        conversationDTO.setTitre("Test Conversation");
 
         when(conversationService.createConversation(any(ConversationDTO.class)))
                 .thenReturn(conversationDTO);
 
         mockMvc.perform(post("/api/conversations/create")
                         .contentType("application/json")
-                        .content("{\"titre\": \"Test Conversation\", \"utilisateur1Id\": 1, \"utilisateur2Id\": 2, \"annonceId\": 3}"))
+                        .accept("*/*")
+                        .content("{\"titre\": \"Test Conversation\", \"utilisateur1Id\": 1, \"utilisateur2Id\": 2, \"annonceId\": 3}")                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.titre").value("Test Conversation"));
 
@@ -68,7 +71,8 @@ public class ConversationControllerTest {
 
         when(conversationService.getConversationsForUser(1L)).thenReturn(conversations);
 
-        mockMvc.perform(get("/api/conversations/user/1"))
+        mockMvc.perform(get("/api/conversations/user/1")
+                        .accept("application/json")) // Set Accept header to JSON
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2))
                 .andExpect(jsonPath("$[0].titre").value("Conversation 1"))
@@ -86,7 +90,9 @@ public class ConversationControllerTest {
 
         when(conversationService.getConversationById(1L)).thenReturn(conversationDTO);
 
-        mockMvc.perform(get("/api/conversations/1"))
+        mockMvc.perform(get("/api/conversations/1")
+                        .accept("*/*")                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.titre").value("Test Conversation"));
 
@@ -104,8 +110,11 @@ public class ConversationControllerTest {
                 .thenReturn(messageDTO);
 
         mockMvc.perform(post("/api/conversations/1/messages")
-                        .contentType("application/json")
-                        .content("{\"content\": \"Test message\"}"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .accept("*/*")
+                        .content("{\"content\": \"Test message\"}")                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content").value("Test message"));
 

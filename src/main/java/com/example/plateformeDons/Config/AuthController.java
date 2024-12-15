@@ -11,11 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 
 import java.util.Optional;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,7 +28,7 @@ public class AuthController {
     private JWTHelper jwtHelper;
 
     // Registration endpoint
-    @PostMapping(value = "/register", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
+    @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody JwtRequest request) {
         try {
             // Check if email or username already exists
@@ -64,7 +61,8 @@ public class AuthController {
         }
     }
 
-    @PostMapping(value = "/login", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
+    // Login endpoint
+    @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody JwtRequest request) {
         try {
             // Find user by username
@@ -85,5 +83,4 @@ public class AuthController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An error occurred during login: " + e.getMessage());
         }
     }
-
 }

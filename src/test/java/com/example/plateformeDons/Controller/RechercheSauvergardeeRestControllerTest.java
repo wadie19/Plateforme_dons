@@ -121,7 +121,9 @@ public class RechercheSauvergardeeRestControllerTest {
         when(rechercheSauvegardeeService.getRecherchesNonNotifiees(mockUtilisateur.getId())).thenReturn(Arrays.asList(savedSearch1, savedSearch2));
 
         // Perform GET request to retrieve saved searches
-        mockMvc.perform(get("/api/recherches/list"))
+        mockMvc.perform(get("/api/recherches/list")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].zone").value("Paris"))
                 .andExpect(jsonPath("$[1].zone").value("Lyon"));
@@ -137,7 +139,9 @@ public class RechercheSauvergardeeRestControllerTest {
         when(rechercheSauvegardeeService.getRecherchesNonNotifiees(mockUtilisateur.getId())).thenReturn(List.of());
 
         // Perform GET request to retrieve saved searches
-        mockMvc.perform(get("/api/recherches/list"))
+        mockMvc.perform(get("/api/recherches/list")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
 

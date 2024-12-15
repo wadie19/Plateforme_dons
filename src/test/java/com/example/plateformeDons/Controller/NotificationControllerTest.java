@@ -1,5 +1,6 @@
 package com.example.plateformeDons.Controller;
 
+import org.springframework.http.MediaType;
 import com.example.plateformeDons.DTO.NotificationDTO;
 import com.example.plateformeDons.Service.NotificationService;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,13 +9,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-
 import java.util.Arrays;
 import java.util.List;
-
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -56,7 +54,9 @@ public class NotificationControllerTest {
         when(notificationService.getNotificationsByUtilisateur(1L)).thenReturn(notifications);
 
         // Perform GET request to fetch notifications by user ID
-        mockMvc.perform(get("/api/notifications/{userId}", 1L))
+        mockMvc.perform(get("/api/notifications/{userId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L))
                 .andExpect(jsonPath("$[1].id").value(2L))
@@ -87,7 +87,9 @@ public class NotificationControllerTest {
         when(notificationService.getAllNotifs()).thenReturn(notifications);
 
         // Perform GET request to fetch all notifications
-        mockMvc.perform(get("/api/notifications"))
+        mockMvc.perform(get("/api/notifications")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(1L))
                 .andExpect(jsonPath("$[1].id").value(2L))
@@ -103,7 +105,9 @@ public class NotificationControllerTest {
         doNothing().when(notificationService).markAsRead(1L);
 
         // Perform PUT request to mark a notification as read
-        mockMvc.perform(put("/api/notifications/read/{notificationId}", 1L))
+        mockMvc.perform(put("/api/notifications/read/{notificationId}", 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 
         verify(notificationService, times(1)).markAsRead(1L);

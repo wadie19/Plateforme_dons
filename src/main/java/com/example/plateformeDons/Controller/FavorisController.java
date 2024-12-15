@@ -8,8 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import org.springframework.http.MediaType;
-
 import java.util.List;
 
 @RestController
@@ -20,7 +18,7 @@ public class FavorisController {
     private FavorisService favorisService;
 
     // Add annonce to favoris
-    @PostMapping(value = "/ajouter", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
+    @PostMapping("/ajouter")
     public ResponseEntity<String> ajouterAuxFavoris(@RequestParam Long annonceId) {
         // Get the currently logged-in user's ID from SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -33,7 +31,7 @@ public class FavorisController {
     }
 
     // Remove annonce from favoris
-    @DeleteMapping(value = "/retirer", consumes = MediaType.ALL_VALUE, produces = MediaType.ALL_VALUE)
+    @DeleteMapping("/retirer")
     public ResponseEntity<String> retirerDesFavoris(@RequestParam Long annonceId) {
         // Get the currently logged-in user's ID from SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -46,7 +44,7 @@ public class FavorisController {
     }
 
     // Get favoris for the logged-in user
-    @GetMapping(value = "/favoris", produces = MediaType.ALL_VALUE)
+    @GetMapping("/favoris")
     public ResponseEntity<List<AnnonceDTO>> getFavoris() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName(); // Get the current logged-in username
